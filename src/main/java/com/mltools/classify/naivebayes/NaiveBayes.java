@@ -1,15 +1,10 @@
 package com.mltools.classify.naivebayes;
 
-import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import com.mltools.classify.Classifier;
 import com.mltools.tools.Tools;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -104,13 +99,12 @@ public class NaiveBayes implements Classifier {
             String type = line.split("\t")[0];
             classSum++;
             fillIntValueMap(classSumMap, type, 1);
-            List<Term> segList = StandardTokenizer.segment(sentence.toLowerCase());
-            for (Term seg : segList) {
-                String word = seg.word;
+            List<String> segList = Arrays.asList(sentence.toLowerCase().split(" "));
+            for (String seg : segList) {
                 wordSum++;
                 classWordSum++;
-                fillIntValueMap(wordSumMap, word, 1);
-                fillIntValueMap(wordClassMap, word + "\t" + type, 1);
+                fillIntValueMap(wordSumMap, seg, 1);
+                fillIntValueMap(wordClassMap, seg + "\t" + type, 1);
             }
             fillIntValueMap(classWordMap, type, classWordSum);
         }
@@ -154,20 +148,19 @@ public class NaiveBayes implements Classifier {
             int index = Integer.parseInt(type) - 1;
             initNumList.set(index, initNumList.get(index) + 1);
             String text = line.split("\t")[1];
-            List<Term> segList = StandardTokenizer.segment(text.toLowerCase());
+            List<String> segList = Arrays.asList(text.toLowerCase().split(" "));
             List<Double> probList = new ArrayList<Double>();
             for (int i = 0; i < bayesData.classProbMap.size(); i++) {
                 probList.add(1.0);
             }
-            for (Term seg : segList) {
-                String word = seg.word;
-                double wordProb = bayesData.wordProbMap.get(word) == null ? (double) 1 / (bayesData.wordSum + 1)
-                        : bayesData.wordProbMap.get(word);
+            for (String seg : segList) {
+                double wordProb = bayesData.wordProbMap.get(seg) == null ? (double) 1 / (bayesData.wordSum + 1)
+                        : bayesData.wordProbMap.get(seg);
                 for (int i = 0; i < probList.size(); i++) {
                     String probType = (i + 1) + "";
-                    double classWordProb = bayesData.wordClassProbMap.get(word + "\t" + probType) == null
+                    double classWordProb = bayesData.wordClassProbMap.get(seg + "\t" + probType) == null
                             ? (double) 1 / (bayesData.classWordMap.get(probType) + 1)
-                            : bayesData.wordClassProbMap.get(word + "\t" + probType);
+                            : bayesData.wordClassProbMap.get(seg + "\t" + probType);
                     probList.set(i, probList.get(i) * classWordProb / wordProb);
                 }
             }
