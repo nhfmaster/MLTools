@@ -1,4 +1,4 @@
-package com.mltools.tools;
+package com.mltools.nlp;
 
 /**
  * Created by nhfmaster on 2017/8/15.

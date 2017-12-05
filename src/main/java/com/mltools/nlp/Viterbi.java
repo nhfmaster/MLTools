@@ -1,4 +1,4 @@
-package com.mltools.tools;
+package com.mltools.nlp;
 
 import java.util.*;
 
