@@ -2,7 +2,6 @@ package com.mltools.classify.perceptron;
 
 import com.mltools.tools.Tools;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
