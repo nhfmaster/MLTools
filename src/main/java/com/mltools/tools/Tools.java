@@ -1,10 +1,7 @@
 package com.mltools.tools;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Tools {
     /**
@@ -20,7 +17,7 @@ public class Tools {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         String line = "";
         try {
             while ((line = br.readLine()) != null) {
@@ -46,7 +43,7 @@ public class Tools {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        HashSet<String> result = new HashSet<>();
+        HashSet<String> result = new HashSet<String>();
         String line = "";
         try {
             while ((line = br.readLine()) != null) {
@@ -132,5 +129,12 @@ public class Tools {
             }
         }
         return index;
+    }
+
+    public static void fillCountMap(Map<Integer, Integer> countMap, int key) {
+        if (countMap.get(key) == null)
+            countMap.put(key, 1);
+        else
+            countMap.put(key, countMap.get(key) + 1);
     }
 }
