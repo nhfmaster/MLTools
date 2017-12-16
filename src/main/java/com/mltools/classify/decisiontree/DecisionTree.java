@@ -30,7 +30,7 @@ public class DecisionTree {
         }
 
         // 选取测试属性
-        Object[] rst = chooseBestTestAttribute(categoryToSamples, attrNames);
+        Object[] rst = id3(categoryToSamples, attrNames);
 
         // 决策树根结点，分支属性为选取的测试属性
         Tree tree = new Tree(attrNames[(Integer) rst[0]]);
@@ -42,9 +42,7 @@ public class DecisionTree {
                 subA[j++] = attrNames[i];
 
         // 根据分支属性生成分支
-        @SuppressWarnings("unchecked")
-        Map<Object, Map<Object, List<Sample>>> splits =
-        /* NEW LINE */(Map<Object, Map<Object, List<Sample>>>) rst[2];
+        Map<Object, Map<Object, List<Sample>>> splits = (Map<Object, Map<Object, List<Sample>>>) rst[2];
         for (Map.Entry<Object, Map<Object, List<Sample>>> entry : splits.entrySet()) {
             Object attrValue = entry.getKey();
             Map<Object, List<Sample>> split = entry.getValue();
@@ -55,7 +53,8 @@ public class DecisionTree {
         return tree;
     }
 
-    public Object[] chooseBestTestAttribute(
+
+    public Object[] id3(
             Map<Object, List<Sample>> categoryToSamples, String[] attrNames) {
 
         int minIndex = -1; // 最优属性下标
@@ -66,9 +65,7 @@ public class DecisionTree {
         for (int attrIndex = 0; attrIndex < attrNames.length; attrIndex++) {
             int allCount = 0; // 统计样本总数的计数器
 
-            // 按当前属性构建Map：属性值->(分类->样本列表)
-            Map<Object, Map<Object, List<Sample>>> curSplits =
-            /* NEW LINE */new HashMap<Object, Map<Object, List<Sample>>>();
+            Map<Object, Map<Object, List<Sample>>> curSplits = new HashMap<Object, Map<Object, List<Sample>>>();
             for (Map.Entry<Object, List<Sample>> entry : categoryToSamples
                     .entrySet()) {
                 Object category = entry.getKey();
