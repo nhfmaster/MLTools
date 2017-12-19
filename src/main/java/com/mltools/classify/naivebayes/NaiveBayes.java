@@ -1,22 +1,21 @@
 package com.mltools.classify.naivebayes;
 
-import com.mltools.classify.Classifier;
 import com.mltools.tools.Tools;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
 /**
  * Created by nhfmaster on 2017/6/17.
  */
-public class NaiveBayes implements Classifier {
+public class NaiveBayes {
     private List<String> trainList = new ArrayList<String>(); // 训练数据
     private List<String> testList = new ArrayList<String>(); // 测试数据
     private String wrongPath = "";
     private BayesData bayesData;
 
     public NaiveBayes() {
+        super();
     }
 
     /**
@@ -132,7 +131,7 @@ public class NaiveBayes implements Classifier {
     /**
      * 朴素贝叶斯预测过程
      */
-    public void test() {
+    public void predict() {
         List<String> lineList = new ArrayList<String>();
         List<Integer> initNumList = new ArrayList<Integer>();
         List<Integer> sameList = new ArrayList<Integer>();
@@ -187,9 +186,9 @@ public class NaiveBayes implements Classifier {
         Tools.writeListToFile(lineList, wrongPath);
     }
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) {
         NaiveBayes nb = new NaiveBayes("train.txt", "test.txt", "wrong.txt");
         nb.train();
-        nb.test();
+        nb.predict();
     }
 }
