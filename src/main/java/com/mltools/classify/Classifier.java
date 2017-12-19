@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/11/8.
+ * Created by nhfmaster on 2017/11/8.
  */
 public class Classifier implements Serializable {
     private boolean dual = true; // dual form

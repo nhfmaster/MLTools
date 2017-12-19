@@ -45,7 +45,7 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 初始化模型参数
+     * initialize model parameters
      */
     private void initPerceptron(List<List<Double>> dataXList) {
         if (!this.dual) {
@@ -60,11 +60,11 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 计算初始形式损失函数数值
+     * calculate loss value in init form
      *
-     * @param dataXList 数据X的List
-     * @param dataY     数据对应Y数值
-     * @return 初始形式损失函数数值
+     * @param dataXList feature value
+     * @param dataY     true value
+     * @return loss value
      */
     private double calInitLossValue(List<Double> dataXList, int dataY) {
         double matrixValue = 0.0;
@@ -77,11 +77,11 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 判断是否需要更新初始形式模型参数
+     * decide whether update parameters in init form
      *
-     * @param xList
-     * @param label
-     * @return
+     * @param xList feature value
+     * @param label true value
+     * @return true if update parameters, false otherwise
      */
     private boolean ifUpdateInitPerceptron(List<Double> xList, int label) {
         double matrixValue = calInitLossValue(xList, label);
@@ -89,10 +89,10 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 更新初始形式模型参数
+     * update parameters in init form
      *
-     * @param xList
-     * @param label
+     * @param xList feature value
+     * @param label true value
      */
     private void updateInitPerceptron(List<Double> xList, int label) {
         bias = bias + learningRate * label;
@@ -103,7 +103,10 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 使用对偶形式训练感知机
+     * train perceptron in dual form
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
      */
     private void dualFormTrain(List<List<Double>> dataXList, List<Integer> dataYList) {
         List<List<Double>> gramMatrix = calGramMatrix(dataXList);
@@ -118,7 +121,10 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 使用原始形式训练感知机
+     * train perceptron in init form
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
      */
     private void initFormTrain(List<List<Double>> dataXList, List<Integer> dataYList) {
         for (int i = 0; i < dataXList.size(); i++) {
@@ -133,10 +139,10 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 更新对偶形式模型参数
+     * update parameters in dual form
      *
-     * @param label
-     * @param i
+     * @param label true value
+     * @param i     number of data
      */
     private void updateDualPerceptron(int label, int i) {
         weight.set(i, weight.get(i) + learningRate);
@@ -144,16 +150,25 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 判断是否需要更新对偶形式模型参数
+     * decide whether update parameters in dual form
      *
-     * @param gramMatrix gram矩阵
-     * @return 更新 true；不更新 false
+     * @param dataYList  true value
+     * @param gramMatrix gram matrix
+     * @return true if update parameters, false otherwise
      */
     private boolean ifUpdateDualPerceptron(List<Integer> dataYList, List<List<Double>> gramMatrix, int i) {
         double matrixValue = calDualLossValue(dataYList, gramMatrix, i);
         return matrixValue <= 0;
     }
 
+    /**
+     * calculate loss value in dual form
+     *
+     * @param dataYList  true value
+     * @param gramMatrix gram matrix
+     * @param i          number of data
+     * @return loss value
+     */
     private double calDualLossValue(List<Integer> dataYList, List<List<Double>> gramMatrix, int i) {
         double tempSum = 0.0;
         for (int j = 0; j < weight.size(); j++)
@@ -161,38 +176,11 @@ public class Perceptron extends Classifier {
         return dataYList.get(i) * (tempSum + bias);
     }
 
-//    /**
-//     * 获得y的数据
-//     *
-//     * @return y数据的List
-//     */
-//    private List<Integer> getDataYList() {
-//        List<Integer> resultList = new ArrayList<Integer>();
-//        for (Map<List<Double>, Integer> map : dataList)
-//            for (Map.Entry<List<Double>, Integer> entry : map.entrySet())
-//                resultList.add(entry.getValue());
-//        return resultList;
-//    }
-//
-//
-//    /**
-//     * 获得x的数据
-//     *
-//     * @return x数据的List
-//     */
-//    private List<List<Double>> getDataXList() {
-//        List<List<Double>> resultList = new ArrayList<List<Double>>();
-//        for (Map<List<Double>, Integer> map : dataList)
-//            for (Map.Entry<List<Double>, Integer> entry : map.entrySet())
-//                resultList.add(entry.getKey());
-//
-//        return resultList;
-//    }
-
     /**
-     * 计算gram矩阵
+     * calculate gram matrix
      *
-     * @return gram矩阵
+     * @param dataXList feature value
+     * @return gram matrix
      */
     private List<List<Double>> calGramMatrix(List<List<Double>> dataXList) {
         List<List<Double>> resultList = new ArrayList<List<Double>>();
@@ -210,9 +198,12 @@ public class Perceptron extends Classifier {
     }
 
     /**
-     * 训练感知机
+     * train perceptron
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
      */
-    private void train(List<List<Double>> dataXList, List<Integer> dataYList) {
+    public void train(List<List<Double>> dataXList, List<Integer> dataYList) {
         initPerceptron(dataXList);
         if (!this.dual)
             initFormTrain(dataXList, dataYList);
@@ -220,7 +211,21 @@ public class Perceptron extends Classifier {
             dualFormTrain(dataXList, dataYList);
     }
 
-    public static void main(String args[]) {
-        Perceptron perceptron = new Perceptron.Builder().setLearningRate(100).build();
+    /**
+     * predict with perceptron
+     *
+     * @param dataXList feature value
+     * @return predict value
+     */
+    public List<Double> predict(List<List<Double>> dataXList) {
+        List<Double> predictList = new ArrayList<Double>();
+        for (List<Double> xList : dataXList) {
+            double result = 0.0;
+            for (int i = 0; i < xList.size(); i++)
+                result += xList.get(i) * weight.get(i);
+            result += bias;
+            predictList.add(result);
+        }
+        return predictList;
     }
 }
