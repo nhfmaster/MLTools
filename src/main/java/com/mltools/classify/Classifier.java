@@ -7,10 +7,10 @@ import java.util.List;
  * Created by nhfmaster on 2017/11/8.
  */
 public class Classifier implements Serializable {
-    private boolean dual = true; // dual form
-    private double learningRate; // learning rate
+    private boolean dual;
+    private double learningRate;
     private String penalty;
-    private double tolerance;
+    private double threshold;
     private double penaltyStrength;
     private String optimizer;
     private int maxIteration;
@@ -19,7 +19,7 @@ public class Classifier implements Serializable {
         private boolean dual;
         private double learningRate;
         private String penalty;
-        private double tolerance;
+        private double threshold;
         private double penaltyStrength;
         private String optimizer;
         private int maxIteration;
@@ -42,8 +42,8 @@ public class Classifier implements Serializable {
             return this;
         }
 
-        public Builder<T> setTolerance(double tolerance) {
-            this.tolerance = tolerance;
+        public Builder<T> setThreshold(double threshold) {
+            this.threshold = threshold;
             return this;
         }
 
