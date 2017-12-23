@@ -15,8 +15,8 @@ public class LogisticRegression extends Classifier {
     private double penaltyStrength; // strength of regularization
     private String optimizer; // optimization algorithm
     private int maxIteration; // max number of iterations
-    private double learningRate;
-    private List<Double> parameterList = new ArrayList<Double>();
+    private double learningRate; // learning rate
+    private List<Double> parameterList = new ArrayList<Double>(); // logistic regression parameter
 
     public static class Builder extends Classifier.Builder<LogisticRegression.Builder> {
         private double learningRate = 0.01;
@@ -75,6 +75,13 @@ public class LogisticRegression extends Classifier {
         this.maxIteration = builder.maxIteration;
     }
 
+    /**
+     * calculate sigmoid function value
+     *
+     * @param parameterList logistic regression parameter
+     * @param xList         feature value
+     * @return sigmoid function value
+     */
     private double sigmoid(List<Double> parameterList, List<Double> xList) {
         double linearResult = 0.0;
         for (int i = 0; i < xList.size(); i++)
@@ -82,11 +89,23 @@ public class LogisticRegression extends Classifier {
         return 1 / (1 + Math.pow(Math.E, -linearResult));
     }
 
+    /**
+     * initialize logistic regression parameters
+     *
+     * @param dataXList feature value
+     */
     private void initParameter(List<List<Double>> dataXList) {
         for (int i = 0; i < dataXList.get(0).size(); i++)
             parameterList.add(1.0);
     }
 
+    /**
+     * update logistic regression parameters
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
+     * @return logistic regression parameters
+     */
     private double updateParameter(List<List<Double>> dataXList, List<Integer> dataYList) {
         int dataSum = dataXList.size();
         for (int i = 0; i < parameterList.size(); i++) {
@@ -104,6 +123,13 @@ public class LogisticRegression extends Classifier {
         return calLossValue(dataXList, dataYList);
     }
 
+    /**
+     * calculate loss value
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
+     * @return loss value
+     */
     private double calLossValue(List<List<Double>> dataXList, List<Integer> dataYList) {
         double loss = 0.0;
         for (int i = 0; i < dataXList.size(); i++) {
@@ -116,6 +142,12 @@ public class LogisticRegression extends Classifier {
         return loss;
     }
 
+    /**
+     * train logistic regression
+     *
+     * @param dataXList feature value
+     * @param dataYList true value
+     */
     public void train(List<List<Double>> dataXList, List<Integer> dataYList) {
         int count = 0;
         initParameter(dataXList);
@@ -126,6 +158,12 @@ public class LogisticRegression extends Classifier {
         }
     }
 
+    /**
+     * predict with logistic regression
+     *
+     * @param dataXList feature value
+     * @return predict value
+     */
     public List<Double> predict(List<List<Double>> dataXList) {
         List<Double> predictList = new ArrayList<Double>();
         for (int i = 0; i < dataXList.size(); i++) {
