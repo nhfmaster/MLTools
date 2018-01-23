@@ -11,6 +11,7 @@ import java.util.List;
 public class KNeighborsClassifier extends Classifier {
     private int neighbourNum; // Number of neighbours
     private String metric; // distance metric
+    private KDTree kdTree;
 
     public static class Builder extends Classifier.Builder<KNeighborsClassifier.Builder> {
         private int neighbourNum = 5;
@@ -46,7 +47,57 @@ public class KNeighborsClassifier extends Classifier {
             KDTreeData kdTreeData = new KDTreeData(dataXList.get(i), dataYList.get(i));
             kdTreeDataList.add(kdTreeData);
         }
+        kdTree = new KDTree(kdTreeDataList);
+    }
 
-        KDTree kdTree = new KDTree(kdTreeDataList);
+    public List<KDTreeNode> getSearchPath(List<Double> xList) {
+        List<KDTreeNode> kdTreeNodeList = new ArrayList<KDTreeNode>();
+        traverse(kdTree.node, kdTreeNodeList, xList);
+        return kdTreeNodeList;
+    }
+
+    private void traverse(KDTreeNode traverseNode, List<KDTreeNode> kdTreeNodeList, List<Double> xList) {
+        if (traverseNode != null) {
+            kdTreeNodeList.add(traverseNode);
+            KDTreeData kdTreeData = traverseNode.kdTreeData;
+            int split = traverseNode.split;
+            double kdTreeNum = kdTreeData.dataX.get(split);
+            double xNum = xList.get(split);
+            if (kdTreeNum > xNum) {
+                traverse(traverseNode.leftNode, kdTreeNodeList, xList);
+            } else {
+                traverse(traverseNode.rightNode, kdTreeNodeList, xList);
+            }
+        }
+    }
+
+    public List<Double> predict(List<List<Double>> dataXList) {
+        List<Double> predictList = new ArrayList<Double>();
+        for (List<Double> xList : dataXList) {
+            List<KDTreeNode> searchPathList = getSearchPath(xList);
+        }
+        return predictList;
+    }
+
+    public static void main(String args[]) {
+        double[][] doubleArr = {{2, 3}, {5, 4}, {9, 6}, {4, 7}, {8, 1}, {7, 2}};
+        List<List<Double>> dataXList = new ArrayList<List<Double>>();
+        List<Integer> dataYList = new ArrayList<Integer>();
+        for (int i = 0; i < doubleArr.length; i++) {
+            List<Double> list = new ArrayList<Double>();
+            for (int j = 0; j < doubleArr[i].length; j++) {
+                list.add(doubleArr[i][j]);
+            }
+            dataXList.add(list);
+            dataYList.add(1);
+        }
+        KNeighborsClassifier kNeighborsClassifier = new KNeighborsClassifier.Builder().setNeighbourNum(1).build();
+        kNeighborsClassifier.train(dataXList, dataYList);
+        List<List<Double>> predictList = new ArrayList<List<Double>>();
+        List<Double> tempList = new ArrayList<Double>();
+        tempList.add(2.0);
+        tempList.add(4.5);
+        predictList.add(tempList);
+        kNeighborsClassifier.predict(predictList);
     }
 }

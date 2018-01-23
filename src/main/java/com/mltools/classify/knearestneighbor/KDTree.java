@@ -11,7 +11,7 @@ import java.util.List;
  * Created by nhfmaster on 2018/1/16.
  */
 public class KDTree {
-    private KDTreeNode node;
+    public KDTreeNode node;
     private List<KDTreeData> kdTreeDataList;
 
     /**
@@ -91,14 +91,17 @@ public class KDTree {
         int index = getSplitField(kdTreeDataList);
         sortBySingleDimension(kdTreeDataList, index);
         int medianIndex = kdTreeDataList.size() / 2;
-
         node = new KDTreeNode(kdTreeDataList.get(medianIndex), index);
         List<KDTreeData> leftRemainList = new ArrayList<KDTreeData>();
         leftRemainList.addAll(kdTreeDataList.subList(0, medianIndex));
         node.leftNode = getDataNode(node, leftRemainList);
+        if (node.leftNode != null)
+            node.leftNode.parentNode = node;
         List<KDTreeData> rightRemainList = new ArrayList<KDTreeData>();
         rightRemainList.addAll(kdTreeDataList.subList(medianIndex + 1, kdTreeDataList.size()));
         node.rightNode = getDataNode(node, rightRemainList);
+        if (node.rightNode != null)
+            node.rightNode.parentNode = node;
         return node;
     }
 

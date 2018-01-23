@@ -4,6 +4,7 @@ package com.mltools.classify.knearestneighbor;
  * Created by nhfmaster on 2018/1/16.
  */
 public class KDTreeNode {
+    KDTreeNode parentNode;
     KDTreeNode leftNode;
     KDTreeNode rightNode;
     KDTreeData kdTreeData;
@@ -15,6 +16,14 @@ public class KDTreeNode {
     public KDTreeNode(KDTreeData kdTreeData, int split) {
         this.kdTreeData = kdTreeData;
         this.split = split;
+    }
+
+    public KDTreeNode getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(KDTreeNode parentNode) {
+        this.parentNode = parentNode;
     }
 
     public KDTreeNode getLeftNode() {
