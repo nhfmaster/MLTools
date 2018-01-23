@@ -12,44 +12,43 @@ import java.util.List;
  */
 public class KDTree {
     private KDTreeNode node;
-    private double[][] data;
+    private List<KDTreeData> kdTreeDataList;
 
     /**
      * constructor
      *
-     * @param data two-dimensional array data
+     * @param kdTreeDataList training data list
      */
-    public KDTree(double[][] data) {
-        this.data = data;
-        if (data.length == 0)
+    public KDTree(List<KDTreeData> kdTreeDataList) {
+        this.kdTreeDataList = kdTreeDataList;
+        if (kdTreeDataList.size() == 0)
             node = new KDTreeNode();
         else
-            node = createKDTree(data);
+            node = createKDTree();
     }
 
     /**
      * create KDTree
      *
-     * @param remainData two-dimensional array data
      * @return KDTreeNode
      */
-    private KDTreeNode createKDTree(double[][] remainData) {
-        return getDataNode(node, remainData);
+    private KDTreeNode createKDTree() {
+        return getDataNode(node, kdTreeDataList);
     }
 
     /**
      * find KDTree split field
      *
-     * @param remainData data array
+     * @param kdTreeDataList training data list
      * @return {@code n}<sup>{@code th}</sup> dimension
      */
-    private int getSplitField(double[][] remainData) {
+    private int getSplitField(List<KDTreeData> kdTreeDataList) {
         double maxVariance = 0.0;
         int index = -1;
-        int columnSize = remainData[0].length;
+        int columnSize = kdTreeDataList.get(0).dataX.size();
         for (int i = 0; i < columnSize; i++) {
             List<Double> tempList = new ArrayList<Double>();
-            for (double[] aData : remainData) tempList.add(aData[i]);
+            for (KDTreeData kdTreeData : kdTreeDataList) tempList.add(kdTreeData.dataX.get(i));
             double variance = Metric.calVariance(tempList);
             if (maxVariance <= variance) {
                 maxVariance = variance;
@@ -62,13 +61,13 @@ public class KDTree {
     /**
      * sort data by {@code n}<sup>{@code th}</sup> dimension
      *
-     * @param list  data list
-     * @param index {@code n}<sup>{@code th}</sup> dimension
+     * @param kdTreeDataList training data list
+     * @param index          {@code n}<sup>{@code th}</sup> dimension
      */
-    private void sortBySingleDimension(List<List<Double>> list, final int index) {
-        Collections.sort(list, new Comparator<List<Double>>() {
-            public int compare(List<Double> list1, List<Double> list2) {
-                double minus = list1.get(index) - list2.get(index);
+    private void sortBySingleDimension(List<KDTreeData> kdTreeDataList, final int index) {
+        Collections.sort(kdTreeDataList, new Comparator<KDTreeData>() {
+            public int compare(KDTreeData o1, KDTreeData o2) {
+                double minus = o1.dataX.get(index) - o2.dataX.get(index);
                 if (minus > 0)
                     return 1;
                 else if (minus == 0)
@@ -82,40 +81,39 @@ public class KDTree {
     /**
      * iterate add KDTree node
      *
-     * @param node       KDTreeNode
-     * @param remainData two-dimensional array data
+     * @param node           KDTreeNode
+     * @param kdTreeDataList training data list
      * @return KDTreeNode
      */
-    private KDTreeNode getDataNode(KDTreeNode node, double[][] remainData) {
-        if (remainData.length == 0)
+    private KDTreeNode getDataNode(KDTreeNode node, List<KDTreeData> kdTreeDataList) {
+        if (kdTreeDataList.size() == 0)
             return null;
-        int index = getSplitField(remainData);
-        List<List<Double>> dataList = new ArrayList<List<Double>>();
-        for (double[] aRemainData : remainData) {
-            List<Double> tempList = new ArrayList<Double>();
-            for (double anARemainData : aRemainData) tempList.add(anARemainData);
-            dataList.add(tempList);
-        }
-        sortBySingleDimension(dataList, index);
-        for (int i = 0; i < dataList.size(); i++)
-            for (int j = 0; j < dataList.get(i).size(); j++)
-                remainData[i][j] = dataList.get(i).get(j);
+        int index = getSplitField(kdTreeDataList);
+        sortBySingleDimension(kdTreeDataList, index);
+        int medianIndex = kdTreeDataList.size() / 2;
 
-        int medianIndex = dataList.size() / 2;
-        List<Double> medianData = dataList.get(medianIndex);
-        node = new KDTreeNode(medianData, index);
-        double[][] leftRemainData = new double[medianIndex][data[0].length];
-        System.arraycopy(remainData, 0, leftRemainData, 0, medianIndex);
-        node.leftNode = getDataNode(node, leftRemainData);
-        double[][] rightRemainData = new double[remainData.length - medianIndex - 1][data[0].length];
-        System.arraycopy(remainData, medianIndex + 1, rightRemainData, 0, remainData.length - medianIndex - 1);
-        node.rightNode = getDataNode(node, rightRemainData);
+        node = new KDTreeNode(kdTreeDataList.get(medianIndex), index);
+        List<KDTreeData> leftRemainList = new ArrayList<KDTreeData>();
+        leftRemainList.addAll(kdTreeDataList.subList(0, medianIndex));
+        node.leftNode = getDataNode(node, leftRemainList);
+        List<KDTreeData> rightRemainList = new ArrayList<KDTreeData>();
+        rightRemainList.addAll(kdTreeDataList.subList(medianIndex + 1, kdTreeDataList.size()));
+        node.rightNode = getDataNode(node, rightRemainList);
         return node;
     }
 
     public static void main(String args[]) {
+        List<KDTreeData> allList = new ArrayList<KDTreeData>();
         double[][] doubleArr = {{2, 3}, {5, 4}, {9, 6}, {4, 7}, {8, 1}, {7, 2}};
-        KDTree kdTree = new KDTree(doubleArr);
+        for (int i = 0; i < doubleArr.length; i++) {
+            List<Double> list = new ArrayList<Double>();
+            for (int j = 0; j < doubleArr[i].length; j++) {
+                list.add(doubleArr[i][j]);
+            }
+            KDTreeData kdTreeData = new KDTreeData(list, 1);
+            allList.add(kdTreeData);
+        }
+        KDTree kdTree = new KDTree(allList);
         KDTreeNode kdTreeNode = kdTree.node;
         System.out.println(kdTreeNode);
     }

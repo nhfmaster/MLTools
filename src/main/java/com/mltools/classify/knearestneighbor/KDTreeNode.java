@@ -1,21 +1,19 @@
 package com.mltools.classify.knearestneighbor;
 
-import java.util.List;
-
 /**
  * Created by nhfmaster on 2018/1/16.
  */
 public class KDTreeNode {
     KDTreeNode leftNode;
     KDTreeNode rightNode;
-    List<Double> data;
+    KDTreeData kdTreeData;
     int split;
 
     public KDTreeNode() {
     }
 
-    public KDTreeNode(List<Double> data, int split) {
-        this.data = data;
+    public KDTreeNode(KDTreeData kdTreeData, int split) {
+        this.kdTreeData = kdTreeData;
         this.split = split;
     }
 
@@ -35,14 +33,6 @@ public class KDTreeNode {
         this.rightNode = rightNode;
     }
 
-    public List<Double> getData() {
-        return data;
-    }
-
-    public void setData(List<Double> data) {
-        this.data = data;
-    }
-
     public int getSplit() {
         return split;
     }
@@ -51,7 +41,15 @@ public class KDTreeNode {
         this.split = split;
     }
 
+    public KDTreeData getKdTreeData() {
+        return kdTreeData;
+    }
+
+    public void setKdTreeData(KDTreeData kdTreeData) {
+        this.kdTreeData = kdTreeData;
+    }
+
     public String toString() {
-        return "data:" + data + ";split:" + split;
+        return "[kdTreeData:" + kdTreeData + "; split:" + split + "]";
     }
 }
