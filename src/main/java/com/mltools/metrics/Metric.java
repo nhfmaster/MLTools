@@ -92,4 +92,23 @@ public class Metric {
         else
             return list.get((size + 1) / 2 - 1);
     }
+
+    /**
+     * calculate Minkowski Distance
+     *
+     * @param list1 data 1
+     * @param list2 data 2
+     * @param p     param
+     * @return Minkowski Distance
+     */
+    public static double calMinkowskiDistance(List<Double> list1, List<Double> list2, int p) {
+        double sum = 0.0;
+        for (int i = 0; i < list1.size(); i++) {
+            double num1 = list1.get(i);
+            double num2 = list2.get(i);
+            sum += Math.pow(Math.abs(num1 - num2), p);
+        }
+        sum = Math.pow(sum, (double) 1 / p);
+        return sum;
+    }
 }

@@ -1,6 +1,7 @@
 package com.mltools.classify.knearestneighbor;
 
 import com.mltools.classify.Classifier;
+import com.mltools.metrics.Metric;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,10 +72,52 @@ public class KNeighborsClassifier extends Classifier {
         }
     }
 
+    private KDTreeNode backtrackSearch(List<KDTreeNode> searchPathList, List<Double> xList) {
+//        List<KDTreeNode> nearestList = new ArrayList<KDTreeNode>();
+        KDTreeNode nearestNode = null;
+        if (searchPathList.size() == 0)
+            return nearestNode;
+        KDTreeNode lastNode = searchPathList.get(searchPathList.size() - 1);
+        nearestNode = lastNode;
+        double distance = Metric.calMinkowskiDistance(xList, lastNode.kdTreeData.dataX, 2);
+        while (searchPathList.size() > 0) {
+            KDTreeNode backTrackNode = searchPathList.get(searchPathList.size() - 1);
+            searchPathList.remove(searchPathList.size() - 1);
+            if (backTrackNode.leftNode == null && backTrackNode.rightNode == null) {
+                double nearDistance = Metric.calMinkowskiDistance(xList, nearestNode.kdTreeData.dataX, 2);
+                double currDistance = Metric.calMinkowskiDistance(xList, backTrackNode.kdTreeData.dataX, 2);
+                if (nearDistance > currDistance) {
+                    nearestNode = backTrackNode;
+                    distance = currDistance;
+                }
+            } else {
+                int split = backTrackNode.split;
+                if (distance > Math.abs(backTrackNode.kdTreeData.dataX.get(split) - xList.get(split))) {
+                    double nearDistance = Metric.calMinkowskiDistance(xList, nearestNode.kdTreeData.dataX, 2);
+                    double currDistance = Metric.calMinkowskiDistance(xList, backTrackNode.kdTreeData.dataX, 2);
+                    if (nearDistance > currDistance) {
+                        nearestNode = backTrackNode;
+                        distance = currDistance;
+                    }
+                    KDTreeNode searchNode;
+                    if (xList.get(split) <= backTrackNode.kdTreeData.dataX.get(split))
+                        searchNode = backTrackNode.rightNode;
+                    else
+                        searchNode = backTrackNode.leftNode;
+                    if (searchNode != null)
+                        searchPathList.add(searchNode);
+                }
+            }
+        }
+        return nearestNode;
+    }
+
     public List<Double> predict(List<List<Double>> dataXList) {
         List<Double> predictList = new ArrayList<Double>();
         for (List<Double> xList : dataXList) {
             List<KDTreeNode> searchPathList = getSearchPath(xList);
+            KDTreeNode nearestNode = backtrackSearch(searchPathList, xList);
+            System.out.println(nearestNode);
         }
         return predictList;
     }
@@ -95,8 +138,8 @@ public class KNeighborsClassifier extends Classifier {
         kNeighborsClassifier.train(dataXList, dataYList);
         List<List<Double>> predictList = new ArrayList<List<Double>>();
         List<Double> tempList = new ArrayList<Double>();
-        tempList.add(2.0);
-        tempList.add(4.5);
+        tempList.add(2.1);
+        tempList.add(3.1);
         predictList.add(tempList);
         kNeighborsClassifier.predict(predictList);
     }
