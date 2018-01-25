@@ -83,22 +83,17 @@ public class KNeighborsClassifier extends Classifier {
         while (searchPathList.size() > 0) {
             KDTreeNode backTrackNode = searchPathList.get(searchPathList.size() - 1);
             searchPathList.remove(searchPathList.size() - 1);
-            if (backTrackNode.leftNode == null && backTrackNode.rightNode == null) {
-                double nearDistance = Metric.calMinkowskiDistance(xList, nearestNode.kdTreeData.dataX, 2);
-                double currDistance = Metric.calMinkowskiDistance(xList, backTrackNode.kdTreeData.dataX, 2);
-                if (nearDistance > currDistance) {
-                    nearestNode = backTrackNode;
-                    distance = currDistance;
-                }
-            } else {
+
+            double nearDistance = Metric.calMinkowskiDistance(xList, nearestNode.kdTreeData.dataX, 2);
+            double currDistance = Metric.calMinkowskiDistance(xList, backTrackNode.kdTreeData.dataX, 2);
+            if (nearDistance > currDistance) {
+                nearestNode = backTrackNode;
+                distance = currDistance;
+            }
+
+            if (!(backTrackNode.leftNode == null && backTrackNode.rightNode == null)) {
                 int split = backTrackNode.split;
                 if (distance > Math.abs(backTrackNode.kdTreeData.dataX.get(split) - xList.get(split))) {
-                    double nearDistance = Metric.calMinkowskiDistance(xList, nearestNode.kdTreeData.dataX, 2);
-                    double currDistance = Metric.calMinkowskiDistance(xList, backTrackNode.kdTreeData.dataX, 2);
-                    if (nearDistance > currDistance) {
-                        nearestNode = backTrackNode;
-                        distance = currDistance;
-                    }
                     KDTreeNode searchNode;
                     if (xList.get(split) <= backTrackNode.kdTreeData.dataX.get(split))
                         searchNode = backTrackNode.rightNode;
@@ -138,8 +133,8 @@ public class KNeighborsClassifier extends Classifier {
         kNeighborsClassifier.train(dataXList, dataYList);
         List<List<Double>> predictList = new ArrayList<List<Double>>();
         List<Double> tempList = new ArrayList<Double>();
-        tempList.add(2.1);
-        tempList.add(3.1);
+        tempList.add(3.5);
+        tempList.add(4.5);
         predictList.add(tempList);
         kNeighborsClassifier.predict(predictList);
     }
