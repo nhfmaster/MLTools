@@ -9,6 +9,7 @@ public class KDTreeNode {
     KDTreeNode rightNode;
     KDTreeData kdTreeData;
     int split;
+    double distance;
 
     public KDTreeNode() {
     }
@@ -56,6 +57,14 @@ public class KDTreeNode {
 
     public void setKdTreeData(KDTreeData kdTreeData) {
         this.kdTreeData = kdTreeData;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public String toString() {
